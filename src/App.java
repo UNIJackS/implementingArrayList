@@ -1,22 +1,28 @@
 import java.lang.String;
 
-class StringArrayList<E> {
+class customArrayList<E> {
     public static final int INITAL_CAPACITY = 8;
 
-    private String[] internalArray; // Internal array to store all values
+    private E[] internalArray; // Internal array to store all values
     private int size;
 
     // -------------------------- Constructors --------------------------
-    public StringArrayList(int size) {
+    public customArrayList(int size) {
         if (size <= 0) {throw new IllegalArgumentException();}
-        internalArray = new String[size];
+        internalArray = createGenericArray(size);
+        //internalArray = new E[size];
         size = 0;
     }
 
-    public StringArrayList() {this(INITAL_CAPACITY);}
+    public customArrayList() {this(INITAL_CAPACITY);}
 
     // ------------------------- Private Methods -------------------------
     private boolean checkInArray(int index) {return index < internalArray.length;}
+
+    @SuppressWarnings("unchecked")
+    private E[] createGenericArray(int size){
+        return (E[]) new Object[size];
+    }
 
     // ----------------------------- Getters -----------------------------
     public int size() {return size;}
@@ -37,7 +43,7 @@ class StringArrayList<E> {
         if (internalArray.length >= desiredCapacity) {return;} // Already enough space exit early
 
         if(desiredCapacity < internalArray.length*2){desiredCapacity = internalArray.length*2;}
-        String[] newInternalArray = new String[desiredCapacity];
+        E[] newInternalArray = createGenericArray(desiredCapacity);
         //Copys over the current contents to the new array
         for (int i = 0; i < size; i += 1) {
             newInternalArray[i] = internalArray[i];
@@ -48,7 +54,7 @@ class StringArrayList<E> {
     public void trimToSize(){
         if (internalArray.length == size) {return;} // Already size early return
 
-        String[] newInternalArray = new String[size];
+        E[] newInternalArray = createGenericArray(size);
         //Copys over the current contents to the new array. Cuts off any elements past the size
         for (int i = 0; i < size; i += 1) {
             newInternalArray[i] = internalArray[i];
@@ -56,7 +62,7 @@ class StringArrayList<E> {
         internalArray = newInternalArray;
     }
 
-    public String get(int index) {
+    public E get(int index) {
         // If attempting to acess past the end of the array throw error.
         if (!checkInArray(index)) {throw new IllegalArgumentException("Attempting to acess index past end of List");}
         // Else return the value in the array.
@@ -64,7 +70,7 @@ class StringArrayList<E> {
     }
 
     // Adds at index of list
-    public void add(String newItem, int index) {
+    public void add(E newItem, int index) {
         ensureCapacity(size+1); // Makes sure there is enough capacity for the new item
 
         // If attempting to acess past the end of the array throw error.
@@ -80,13 +86,13 @@ class StringArrayList<E> {
     }
 
     // Adds to end of list
-    public void add(String newItem) {
+    public void add(E newItem) {
         add(newItem, size);
     }
 
-    public String remove(int index) {
+    public E remove(int index) {
         if (!checkInArray(index)) {throw new IllegalArgumentException("Attempting to remove item at index past end of list | index :" + index);}
-        String removedValue = internalArray[index];
+        E removedValue = internalArray[index];
         //Shift all the items down from the position of the item
         for (int i = index; i < size - 1; i += 1) {
             internalArray[i] = internalArray[i + 1];
@@ -96,7 +102,7 @@ class StringArrayList<E> {
         return removedValue;
     }
 
-    public String remove(String toRemove) {
+    public E remove(E toRemove) {
         for (int i = 0; i < size; i += 1) {
             if (toRemove.equals(internalArray[i])) {
                 return remove(i);   // Early exit so only first copy of string is removed.
@@ -112,7 +118,7 @@ public class App {
         System.out.println("Hello, World!");
         // assert false : "always false assert";
 
-        StringArrayList testArrayList = new StringArrayList();
+        customArrayList<String> testArrayList = new customArrayList<String>();
         System.out.println(testArrayList);
 
         testArrayList.add("1 Item");
@@ -127,7 +133,7 @@ public class App {
         testArrayList.add("10 Item");
         System.out.println(testArrayList);
 
-        /*
+        
 
         assert testArrayList.size() == 10 : "size does not return 10";
         assert testArrayList.get(3) == "4 Item" : "Forth item does not match";
@@ -135,25 +141,18 @@ public class App {
         testArrayList.remove(7);
         assert testArrayList.size() == 9 : "size does not return 9 after removing item";
         assert testArrayList.get(3) == "4 Item" : "fourth item does not match";
-        System.out.println(testArrayList);
 
         testArrayList.add("new first",0);
-        System.out.println(testArrayList);
 
         testArrayList.add("new item",5);
-        System.out.println(testArrayList);
-    */
+    
         testArrayList.remove(9);
-        System.out.println(testArrayList);
 
         testArrayList.add("test");
-        System.out.println(testArrayList);
 
 
         testArrayList.trimToSize();
-        System.out.println(testArrayList);
         testArrayList.add("test 2");
-        System.out.println(testArrayList);
 
 
 
